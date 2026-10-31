@@ -67,6 +67,9 @@ nbconvert = ">=7.17.2,<8"
 mkdocs-material = ">=9.8.0,<10"
 scipy = ">=1.18.1,<2"
 scikit-learn = ">=1.9.1,<2"
+ipywidgets = ">=8.1.9,<9"
+pytest = ">=9.2.0,<10"
+skore = ">=0.29.0,<0.30"
 
 [tool.pixi.pypi-dependencies]
 winter-school = { path = ".", editable = true }

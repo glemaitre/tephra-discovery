@@ -1,20 +1,30 @@
-"""Data loading and X-marker wiring.
+"""Data loading for the volcanic geochemistry tables.
 
-Owns: how raw data is materialized into `(X, y)`, and how structural
-metadata (groups, time ordering, ...) is attached at the X marker via
-`split_kwargs`. Data paths are decided by the caller — this module
-does not invent a `data/` directory.
+Owns: how the raw table is read into a frame. The X/y split and the
+feature selection live in `features.py`; paths are decided by the
+caller, so this module never invents a `data/` directory.
 """
 
 from __future__ import annotations
 
+from pathlib import Path
 
-def load_dataset():
-    """Return `(X, y)` ready for the pipeline.
+import pandas as pd
 
-    Replace the body with the actual loader: `pd.read_parquet`,
-    `pd.read_csv`, a fixture fetch, a remote query, etc. The return
-    contract is `(X, y)` where `X` is a DataFrame (or whatever the
-    pipeline expects at its X marker) and `y` is the target.
+TARGET_COL = "Event"
+
+
+def load_raw(data_dir: str | Path) -> pd.DataFrame:
+    """Read the training table from `data_dir`.
+
+    Parameters
+    ----------
+    data_dir : str or Path
+        Directory holding `train.csv`.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The training table, unmodified.
     """
-    raise NotImplementedError
+    return pd.read_csv(Path(data_dir) / "train.csv")

@@ -1,25 +1,31 @@
-"""Learner declaration.
+"""Learner declaration for the baseline experiment.
 
-Owns: the function that builds and returns the (unfit) learner —
-typically a `SkrubLearner` produced from a skrub DataOps graph that
-composes the steps in `data.py` and `features.py` with the chosen
-estimator. Fitting, evaluation, and persistence happen elsewhere.
-
-Note on the source-binding preview. When the graph roots a
-`skrub.var(name, value=...)` on a source identifier (path, URL,
-table name), the `value` is the **preview** — the binding used by
-`learner.skb.preview()` while iterating interactively. The preview
-is intentionally exposed as an **optional** keyword on
-`build_learner` so the caller (typically the experiment script) can
-pass an absolute path resolved from the package root, instead of a
-CWD-relative literal baked into this file. Without a preview, the
-graph still fits and evaluates — only `.skb.preview()` is
-unavailable.
+Owns: the function that builds and returns the unfit learner. The
+graph roots on a `data_dir` source, selects the chemistry features,
+and fits a dummy that always predicts the most frequent eruption. The
+comparison metric is the multiclass Brier score, which skore reports
+only for binary classification, so it is attached with
+`with_scoring`. Fitting, evaluation, and persistence happen elsewhere.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
+
+import skrub
+from sklearn.dummy import DummyClassifier
+from sklearn.metrics import brier_score_loss, make_scorer
+
+from winter_school.data import TARGET_COL, load_raw
+from winter_school.features import select_features
+
+# Probability columns follow the estimator's sorted class order, which
+# is also the order `brier_score_loss` infers from `y_true`.
+brier_scorer = make_scorer(
+    brier_score_loss,
+    response_method="predict_proba",
+    greater_is_better=False,
+)
 
 
 def build_learner(data_dir_preview: str | Path | None = None):
@@ -29,10 +35,25 @@ def build_learner(data_dir_preview: str | Path | None = None):
     ----------
     data_dir_preview : str or Path or None, optional
         Preview value for the source-bound `skrub.var("data_dir", ...)`
-        root. Pass an absolute path (e.g. `winter_school.PROJECT_ROOT / "data"`)
-        when iterating interactively so `learner.skb.preview()` works.
-        Leave as `None` for fit / cross-validate runs — the env-dict
-        passed to `skore.evaluate(..., data={"data_dir": ...})`
-        supplies the binding regardless.
+        root. Pass an absolute path while iterating interactively so
+        `learner.skb.preview()` works. Leave as `None` for fit runs —
+        the env dict passed to `skore.evaluate` supplies the binding.
+
+    Returns
+    -------
+    skrub.SkrubLearner
+        The unfit learner.
     """
-    raise NotImplementedError
+    data_dir = (
+        skrub.var("data_dir", value=str(data_dir_preview))
+        if data_dir_preview is not None
+        else skrub.var("data_dir")
+    )
+    data = data_dir.skb.apply_func(load_raw)
+    X = data.skb.apply_func(select_features).skb.mark_as_X()
+    y = data[TARGET_COL].skb.mark_as_y()
+    predictions = X.skb.apply(
+        DummyClassifier(strategy="most_frequent", random_state=0), y=y
+    )
+    predictions = predictions.skb.with_scoring(brier_scorer, name="brier_score")
+    return predictions.skb.make_learner()

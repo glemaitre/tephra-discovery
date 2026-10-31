@@ -1,0 +1,19 @@
+# skore 0.29.0, _reports/estimator/report.py line 395.
+# `to_dict` writes train_data: None; the local store skips persisting a
+# None subset, so `from_dict` raised KeyError on any report whose
+# training bindings were absent (a `splitter="prefit"` report).
+#
+# Reapply after a reinstall, from the workspace root:
+#   pixi run -e dev python -c "import skore, pathlib; print(pathlib.Path(skore.__file__).parent)"
+#   patch --directory=<that path>/../.. -p1 < patches/skore-0.29.0-prefit-train-data.patch
+--- a/skore/_reports/estimator/report.py
++++ b/skore/_reports/estimator/report.py
+@@ -392,7 +392,7 @@
+         report.learner_ = state["learner"]
+         report.estimator = state["estimator"]
+         data = state["data"]
+-        report._train_data = data["train_data"]
++        report._train_data = data.get("train_data")
+         report._test_data = data["test_data"]
+         report._cache = Cache()
+         report._cache.update(state["optional"]["cache"])

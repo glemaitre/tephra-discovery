@@ -4,10 +4,10 @@
 
 | Variable | Value |
 |---|---|
-| Project / dataset | <fill in — e.g., `adult-census` classification> |
-| Goal | <one sentence — what would "done" look like for this project?> |
-| Last experiment | <NN_name> — <status: planned \| approved \| running \| done \| abandoned> |
-| Last result | <one-line headline metric, or "n/a" if not yet run> |
+| Project / dataset | volcanic geochemistry — 30-event source attribution (classification) |
+| Goal | Predict which eruption produced a sample from its chemistry. |
+| Last experiment | 01_event_dummy_baseline — done |
+| Last result | Brier score -1.849821 (per-class ROC AUC 0.500) |
 
 ## Data understanding
 
@@ -31,7 +31,7 @@
 | Known at predict | n/a |
 | Time role | n/a |
 | Metric role | proper_score |
-| Metric | Brier score plus ROC AUC |
+| Metric | Brier score over rows and classes plus per-class ROC AUC, with no macro or micro average across classes |
 | Baseline | dummy |
 | Baseline note | always predict PCC2011 |
 | Folds | predefined |
@@ -40,11 +40,14 @@
 
 | Stem | Intent (one line) | Status | Headline result | Report | Design note |
 |---|---|---|---|---|---|
+| 01_event_dummy_baseline | Dummy reference for the 30-event source-attribution target | done | Brier score -1.849821 (per-class ROC AUC 0.500) | local workspace: [reports/](../reports/) · id: 01a1927f-a51d-76f4-814e-5a4eb30218d0<br>absolute path: /Users/glemaitre/Documents/scratch/winter-school/reports/ | [journal/01_event_dummy_baseline.md](01_event_dummy_baseline.md) |
 
 ## Ideas
 
 | Question | Status | Experiment | Source |
 |---|---|---|---|
+| Does the usable feature set change the comparison once a real learner is tried? | open | 01_event_dummy_baseline | design:01_event_dummy_baseline |
+| Can the report carry its training bindings so the train-versus-test checks actually run? | open | 01_event_dummy_baseline | audit:01_event_dummy_baseline:checks.SKD001 |
 
 ## Backlog
 
