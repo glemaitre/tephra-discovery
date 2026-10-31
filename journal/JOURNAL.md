@@ -6,8 +6,8 @@
 |---|---|
 | Project / dataset | volcanic geochemistry — 30-event source attribution (classification) |
 | Goal | Predict which eruption produced a sample from its chemistry. |
-| Last experiment | 01_event_dummy_baseline — done |
-| Last result | Brier score -1.849821 (per-class ROC AUC 0.500) |
+| Last experiment | 02_event_major_oxide_gbdt — done |
+| Last result | Brier score -0.360931 (accuracy 0.723480, per-class ROC AUC 0.872–1.000) |
 
 ## Data understanding
 
@@ -41,6 +41,7 @@
 | Stem | Intent (one line) | Status | Headline result | Report | Design note |
 |---|---|---|---|---|---|
 | 01_event_dummy_baseline | Dummy reference for the 30-event source-attribution target | done | Brier score -1.849821 (per-class ROC AUC 0.500) | local workspace: [reports/](../reports/) · id: 01a1927f-a51d-76f4-814e-5a4eb30218d0<br>absolute path: /Users/glemaitre/Documents/scratch/winter-school/reports/ | [journal/01_event_dummy_baseline.md](01_event_dummy_baseline.md) |
+| 02_event_major_oxide_gbdt | Gradient-boosted classifier on the 11 major oxides against the dummy reference | done | Brier score -0.360931 (accuracy 0.723480, per-class ROC AUC 0.872–1.000) | local workspace: [reports/](../reports/) · id: 01a19295-7e42-734a-808d-9ba5c19da885<br>absolute path: /Users/glemaitre/Documents/scratch/winter-school/reports/ | [journal/02_event_major_oxide_gbdt.md](02_event_major_oxide_gbdt.md) |
 
 ## Ideas
 

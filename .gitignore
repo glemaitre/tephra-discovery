@@ -76,3 +76,5 @@ html/
 # skore-skills resolved-dotfiles: .agents/
 /report.html
 !scratch/results/*/report.html
+report.html
+# skore-skills resolved-review: audit/02_event_major_oxide_gbdt.nb.html experiments/02_event_major_oxide_gbdt.nb.html

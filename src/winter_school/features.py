@@ -60,6 +60,23 @@ EXCLUDED_COLUMNS = (
 DERIVED_SUFFIXES = ("_normalized", "_2SE")
 DERIVED_COLUMNS = ("Total", "Total_normalization")
 
+# The 11 major oxides the table itself normalizes. The recorded
+# exploration verified each one equals `oxide / Total * 100`, so this is
+# the compositional block that closes to `Total`.
+MAJOR_OXIDES = (
+    "SiO2",
+    "TiO2",
+    "Al2O3",
+    "FeOT",
+    "MnO",
+    "MgO",
+    "CaO",
+    "Na2O",
+    "K2O",
+    "P2O5",
+    "Cl",
+)
+
 
 def select_features(frame: pd.DataFrame) -> pd.DataFrame:
     """Return the chemistry feature matrix.
@@ -84,3 +101,27 @@ def select_features(frame: pd.DataFrame) -> pd.DataFrame:
             column for column in features.columns if column.endswith(DERIVED_SUFFIXES)
         ]
     )
+
+
+def select_major_oxides(frame: pd.DataFrame) -> pd.DataFrame:
+    """Return the major-oxide feature matrix.
+
+    Narrower than :func:`select_features`: the trace-element block, the
+    isotope ratios and their standard errors are left out, because the
+    recorded exploration found trace coverage at about 20% of rows and
+    absent for three volcanoes, and because whether a trace analysis was
+    run follows the analytical programme rather than the geology.
+
+    Missing oxides are kept as NaN; the learner bins them natively.
+
+    Parameters
+    ----------
+    frame : pandas.DataFrame
+        The loaded table, including the target column.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The 11 major oxides, in :data:`MAJOR_OXIDES` order.
+    """
+    return frame[list(MAJOR_OXIDES)]

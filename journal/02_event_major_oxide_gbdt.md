@@ -76,10 +76,22 @@ score and per-class ROC AUC for `Event`?
 
 - **State:** approved
 - **Approved by user on:** 2026-10-31
-- **Headline result:** <fill in after run, or `n/a — abandoned: <reason>`>
-- **Persisted report:** <backend locator after `project.put`, or `n/a — backend did not expose a locator`>
-- **Audit findings:** n/a — audit not run
-- **Implication for next iteration:** <fill in after run — what it suggests to try next. For abandonment: one line on what the abandonment teaches (e.g., "rules out monotonic-NN direction without paid GPU env")>
+- **Headline result:** Brier score -0.360931 (accuracy 0.723480, per-class ROC AUC 0.872–1.000)
+- **Persisted report:** local workspace: [reports/](../reports/) · id: 01a19295-7e42-734a-808d-9ba5c19da885<br>absolute path: /Users/glemaitre/Documents/scratch/winter-school/reports/
+- **Audit findings:** 0 issue(s), 1 tip(s) — SKD016 (tip); accuracy 0.723480
+- **Implication for next iteration:** the major oxides alone separate the 30 events by a wide margin, so the next questions are whether the untuned defaults are what caps the score and whether the same result holds when the trace block is added or when the evaluation groups by `SampleID`.
+
+## Results
+
+### Report overview
+
+The major-oxide classifier beats the dummy reference on the locked comparison: multiclass Brier score -0.361 against -1.850, accuracy 0.723 against 0.075, and log loss 1.140. The per-class ROC AUC runs from 0.872 for the hardest event to 1.000 for the easiest, so almost every event ranks its own samples above the rest even though all 30 events appear in both the training and test tables. The score comes from the shipped training and test tables: the model is fitted on the 6220 training rows and scored on the 839 test rows, which share no sample identifier.
+
+### Checks
+
+The automated checks raised 0 issues and 1 tip: the estimator is left at its default settings and skore suggests tuning `learning_rate` and `max_leaf_nodes` for `HistGradientBoostingClassifier`. Fifteen checks came back not applicable; for eight of them the stated reason is that train data is unavailable, because a `prefit` report carries only the test bindings. That is the same limitation that left the dummy's train-side checks unrun, so the summary still cannot separate "no problem" from "never checked" for overfitting, underfitting, correlated features and the baseline comparisons.
+
+### Metrics
 
 ## Notebooks
 
