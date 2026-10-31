@@ -1,0 +1,2 @@
+local workspace: [reports/](../reports/) · id: 01a1927f-a51d-76f4-814e-5a4eb30218d0
+absolute path: /Users/glemaitre/Documents/scratch/winter-school/reports/

@@ -23,8 +23,10 @@ dist/
 # skore Project store — large/binary; commit selectively if at all
 reports/
 
-# agent scratch space — gitignored entirely
-scratch/
+# agent scratch space — gitignored, except the skore report snapshots that the
+# site build embeds into the published site
+scratch/*
+!scratch/results/
 
 # mlflow filesystem fallback (sqlite backend is .db; keep both ignored to be safe)
 mlruns/
@@ -35,8 +37,12 @@ mlartifacts/
 # jupytext source-of-truth is .py; never commit .ipynb
 *.ipynb
 
-# notebook viewers rebuilt by notebook convert --html
+# notebook viewers rebuilt by notebook convert --html.
+# The site build embeds these, so the ones that go into the site are committed.
 *.nb.html
+!data_analysis/*.nb.html
+!experiments/*.nb.html
+!audit/*.nb.html
 
 # MkDocs output (derived; site build adds report.html at the root)
 _build/

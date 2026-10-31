@@ -1,0 +1,17 @@
+EstimatorReport:
+        'SkrubLearner'
+
+        Metric            Label        Average
+brier_score                               -1.849821
+Accuracy                                   0.075089
+Precision         1852 Llaima              0.000000
+                  Achen                    0.000000
+                  Arauco                   0.000000
+                                            ...    
+ROC AUC           Vilcún                   0.500000
+                               macro       0.500000
+Log loss                                  33.337157
+Fit time (s)                                    NaN
+Predict time (s)                           0.000642
+Name: SkrubLearner, Length: 98, dtype: float64
+        Call `report.to_markdown()` for a markdown summary of the report's contents.
