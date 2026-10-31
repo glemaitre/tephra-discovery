@@ -14,27 +14,27 @@
 | Variable | Value |
 |---|---|
 | Status | done — 2026-10-31 |
-| Summary | 6220 train rows and 839 test rows, 95 columns. Targets are the source labels `Volcano` (13 classes, 1685→77 rows, ~22:1) and `Event` (30 classes, 567→67, ~8.5:1); both fully observed. 45 chemistry columns separate the sources (major oxides p ≈ 0 against both targets; `Sr87_Sr86` only marginal at p = 0.021/0.064), six major oxides give 52.7% of the variance in two PCA components, and between-volcano variance is 15–26× the within-sample variance over 222 replicated samples. Trace elements exist for only 26 columns at ~20% coverage and are absent for Huanquihue Group, Quetrupillán and Villarrica; geographic distance barely tracks composition distance (Spearman 0.215). The shipped split is sample-grouped (0 shared `SampleID`, all 13 volcanoes and 30 events in both tables), so it tests new analyses of known sources. `Authors`/`DOI` cover 60.9% of rows with volcano-unique values — a leakage risk. |
+| Summary | 6220 train rows and 839 test rows, 95 columns. The target is `Event`, the eruption that produced a sample: 30 classes, 567→67 rows (~8.5:1), fully observed on all 6220 training rows. 45 chemistry columns separate the sources (major oxides p ≈ 0; `Sr87_Sr86` only marginal at p = 0.064), six major oxides give 52.7% of the variance in two PCA components, and between-source variance is 15–26× the within-sample variance over 222 replicated samples. Trace elements exist for only 26 columns at ~20% coverage and are absent for three volcanoes; geographic distance barely tracks composition distance (Spearman 0.215). The shipped split is sample-grouped (0 shared `SampleID`, all 30 events in both tables), so it tests new analyses of known eruptions. 69 leakage flags come from class-conditional null rates in `Magnitude`, `VEI`, `HistoricalAge` and the location columns, and `Authors`/`DOI` cover 60.9% of rows with volcano-unique values. |
 | Report | [data_analysis/data_analysis.md](../data_analysis/data_analysis.md) |
 
 ## Modeling decisions
 
 | Variable | Value |
 |---|---|
-| Status | <missing \| draft \| locked> |
-| Revised on | <date or n/a> |
-| Prediction goal | <probabilities \| point_labels \| intervals \| point_predictions> |
-| Deployment | <iid \| time \| groups> |
-| Horizon | <n/a, or one or more number-and-unit values> |
-| Gap | <n/a or number and unit> |
-| Generalize to | <n/a or column> |
-| Known at predict | <n/a or columns> |
-| Time role | <n/a \| sort_key \| covariate> |
-| Metric role | <imposed \| proper_score \| ranking \| thresholded \| point_error> |
-| Metric | <comparison name> |
-| Baseline | <one of seasonal_naive, group_mean, logistic, production, dummy> |
-| Baseline note | <one short phrase> |
-| Folds | <integer at least 1, or predefined> |
+| Status | locked |
+| Revised on | 2026-10-31 |
+| Prediction goal | probabilities |
+| Deployment | groups |
+| Horizon | n/a |
+| Gap | n/a |
+| Generalize to | SampleID |
+| Known at predict | n/a |
+| Time role | n/a |
+| Metric role | proper_score |
+| Metric | Brier score plus ROC AUC |
+| Baseline | dummy |
+| Baseline note | always predict PCC2011 |
+| Folds | predefined |
 
 ## History
 

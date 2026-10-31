@@ -6,11 +6,9 @@
 # dtypes, missingness, univariate distributions, cardinality, and top
 # pairwise associations — do not re-plot those.
 #
-# The prediction targets are `Volcano` and `Event`. Both describe where a
-# sample came from, so the task is **source attribution**: assign a glass or
-# whole-rock analysis to the volcano and to the eruption that produced it.
-# Two categorical outputs are not one joint model, so each is recorded and
-# explored on its own.
+# The prediction target is `Event`: the eruption that produced a sample, so
+# the task is **source attribution**. `Volcano`, the source edifice, is the
+# coarser label and is the subject of a separate later experiment.
 
 # %%
 import pandas as pd
@@ -27,29 +25,24 @@ FRAME = RAW.to_pandas() if hasattr(RAW, "to_pandas") else RAW
 RAW
 
 # %% [markdown]
-# ## Prediction targets
+# ## Target distribution
 #
-# `Volcano` is the source edifice and `Event` the specific eruption within
-# it. Both are classification targets and both are fully observed in the
-# training table. They are not combined into a single output; a later model
-# is reported for one of them.
+# `Event` is the eruption that produced a sample. It is fully observed in the
+# training table; class counts follow.
 
 # %%
-target_summary = pd.DataFrame(
-    {
-        "task": ["classification", "classification"],
-        "n_classes": [
-            int(FRAME["Volcano"].nunique(dropna=True)),
-            int(FRAME["Event"].nunique(dropna=True)),
-        ],
-        "n_missing": [
-            int(FRAME["Volcano"].isna().sum()),
-            int(FRAME["Event"].isna().sum()),
-        ],
-    },
-    index=["Volcano", "Event"],
-)
+TARGET = "Event"
+y = FRAME[TARGET]
+counts = y.value_counts(dropna=False)
+target_summary = counts.rename("count").to_frame()
+target_summary["rate"] = target_summary["count"] / target_summary["count"].sum()
 target_summary
+
+# %%
+plot_df = target_summary.reset_index(names=TARGET)
+g = sns.catplot(data=plot_df, x=TARGET, y="count", kind="bar")
+g.savefig(OUT / "target_distribution.png", bbox_inches="tight")
+g
 
 # %% [markdown]
 # ## Table overview: train
@@ -927,3 +920,57 @@ volcanoes_without_trace = sorted(
     - set(FRAME.loc[FRAME[TRACE_COLUMNS].notna().any(axis=1), "Volcano"])
 )
 source_distance_correlation
+
+# %% [markdown]
+# ## Feature vs target: Event
+#
+# A readable subset of the numeric chemistry columns against the target, not
+# every pairwise plot. Identifier and provenance columns are left out because
+# they would carry the label rather than predict it.
+
+# %%
+BIVARIATE_CAP = 12
+bivariate_cols = [column for column in CHEM_COLUMNS if column != TARGET][:BIVARIATE_CAP]
+pd.Series(bivariate_cols, name="bivariate_columns")
+
+# %%
+long = FRAME.melt(
+    id_vars=[TARGET],
+    value_vars=bivariate_cols,
+    var_name="feature",
+    value_name="value",
+)
+g = sns.catplot(
+    data=long,
+    x=TARGET,
+    y="value",
+    col="feature",
+    col_wrap=4,
+    kind="box",
+    sharey=False,
+)
+g.savefig(OUT / "bivariate_grid.png", bbox_inches="tight")
+g
+
+# %% [markdown]
+# ## Leakage candidates
+#
+# Flags only — not a train/test split.
+
+# %%
+leakage_flags: list[str] = []
+if pd.api.types.is_numeric_dtype(y):
+    corr = FRAME.select_dtypes("number").corrwith(y).abs().sort_values(ascending=False)
+    for col, value in corr.items():
+        if col == TARGET:
+            continue
+        if value is not None and value >= 0.99:
+            leakage_flags.append(f"{col} abs(Pearson) vs {TARGET} = {value:.3f}")
+for col in FRAME.columns:
+    if col == TARGET:
+        continue
+    rates = FRAME.groupby(y, dropna=False)[col].apply(lambda s: s.isna().mean())
+    if rates.max() - rates.min() >= 0.5:
+        leakage_flags.append(f"{col} null rate differs by class: {rates.to_dict()}")
+leakage_summary = pd.DataFrame({"flag": leakage_flags or ["none"]})
+leakage_summary
