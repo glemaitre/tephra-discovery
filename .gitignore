@@ -1,0 +1,69 @@
+# python build / cache
+__pycache__/
+*.egg-info/
+build/
+dist/
+*.pyc
+
+# tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# data artifacts — you own the data/ layout (raw inputs).
+# Do NOT ignore the whole data/ folder if you want samples committed.
+# Exploratory data analysis lives in data_analysis/
+# (data_analysis.py, data_analysis.md, data_analysis_*.html) and
+# should stay tracked. To keep large/local-only raw INPUTS out of git,
+# ignore specific input paths only, e.g.:
+# data/raw/
+# data/*.parquet
+# data/*.csv
+
+# skore Project store — large/binary; commit selectively if at all
+reports/
+
+# agent scratch space — gitignored entirely
+scratch/
+
+# mlflow filesystem fallback (sqlite backend is .db; keep both ignored to be safe)
+mlruns/
+mlartifacts/
+*.db
+*.db-journal
+
+# jupytext source-of-truth is .py; never commit .ipynb
+*.ipynb
+
+# notebook viewers rebuilt by notebook convert --html
+*.nb.html
+
+# MkDocs output (derived; site build adds report.html at the root)
+_build/
+html/
+
+# generated figures (uncomment if you regenerate from scripts)
+# figures/
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# claude harness state
+.claude/mlflow
+.claude/settings.*
+
+# skore-cli hub keys + workspace policy (never commit)
+.skore
+
+# hidden files/dirs (exceptions below)
+.*
+!.gitignore
+!.gitattributes
+
+# pixi: ignore the env, keep committed config
+!.pixi/
+.pixi/*
+!.pixi/config.toml
+# skore-skills resolved-dotfiles: .agents/
