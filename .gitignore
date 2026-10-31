@@ -74,4 +74,5 @@ html/
 .pixi/*
 !.pixi/config.toml
 # skore-skills resolved-dotfiles: .agents/
-report.html
+/report.html
+!scratch/results/*/report.html
