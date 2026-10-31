@@ -38,10 +38,21 @@ ruff = "*"
 ipython = "*"
 ipykernel = "*"
 
+# docs-only environment: linux-64 (CI runner) and no ML stack to solve
+[tool.pixi.feature.docs]
+platforms = ["linux-64"]
+
+[tool.pixi.feature.docs.dependencies]
+mkdocs-material = ">=9.8.0,<10"
+
+[tool.pixi.feature.docs.pypi-dependencies]
+skore-skills = "*"
+
 [tool.pixi.environments]
 default = { features = ["default"], solve-group = "default" }
 agent = { features = ["agent"], solve-group = "default" }
 dev = { features = ["default", "agent"], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "docs", no-default-feature = true }
 
 [tool.pixi.dependencies]
 pandas = ">=3.1.0,<4"
@@ -58,4 +69,4 @@ scipy = ">=1.18.1,<2"
 scikit-learn = ">=1.9.1,<2"
 
 [tool.pixi.pypi-dependencies]
-winter-school = { path = "/Users/glemaitre/Documents/scratch/winter-school", editable = true }
+winter-school = { path = ".", editable = true }
