@@ -61,6 +61,7 @@ html/
 .*
 !.gitignore
 !.gitattributes
+!.github/
 
 # pixi: ignore the env, keep committed config
 !.pixi/
