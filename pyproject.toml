@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "winter-school"
+version = "0.1.0"
+description = "Workspace package for the winter_school ML experiments."
+requires-python = ">=3.11"
+dependencies = ["skore==0.29"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/winter_school"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "D"]
+
+[tool.ruff.lint.per-file-ignores]
+"experiments/**" = ["E402", "B018", "D100", "D103"]
+"audit/**" = ["E402", "B018", "D100", "D103"]
+"data_analysis/**" = ["E402", "B018", "D100", "D103"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+docstring-code-format = true
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
+
+[tool.pixi.feature.agent.dependencies]
+ruff = "*"
+ipython = "*"
+ipykernel = "*"
+
+[tool.pixi.environments]
+default = { features = ["default"], solve-group = "default" }
+agent = { features = ["agent"], solve-group = "default" }
+dev = { features = ["default", "agent"], solve-group = "default" }
+
+[tool.pixi.dependencies]
+pandas = ">=3.1.0,<4"
+skrub = ">=0.11.0,<0.12"
+matplotlib = ">=3.11.2,<4"
+seaborn = ">=0.13.2,<0.14"
+pydot = ">=4.0.1,<5"
+graphviz = ">=14.1.2,<15"
+jupytext = ">=1.19.6,<2"
+nbformat = ">=5.11.1,<6"
+nbconvert = ">=7.17.2,<8"
+mkdocs-material = ">=9.8.0,<10"
+scipy = ">=1.18.1,<2"
+scikit-learn = ">=1.9.1,<2"
+
+[tool.pixi.pypi-dependencies]
+winter-school = { path = "/Users/glemaitre/Documents/scratch/winter-school", editable = true }
